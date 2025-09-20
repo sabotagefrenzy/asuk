@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
 import Title from "../components/Title";
@@ -14,6 +14,36 @@ const Collection = () => {
   const [subcategory, setSubCategory] = useState([]);
 
   const [sortType, setSortType] = useState("relevant");
+  // New: size & price filters
+  const [selectedSizes, setSelectedSizes] = useState([]);
+  const priceBounds = useMemo(() => {
+    if (!products || products.length === 0) return { min: 0, max: 0 };
+    let min = Infinity, max = -Infinity;
+    for (const p of products) {
+      if (typeof p.price === 'number') {
+        if (p.price < min) min = p.price;
+        if (p.price > max) max = p.price;
+      }
+    }
+    if (!isFinite(min)) min = 0;
+    if (!isFinite(max)) max = 0;
+    return { min, max };
+  }, [products]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
+
+  useEffect(() => {
+    setMinPrice(priceBounds.min);
+    setMaxPrice(priceBounds.max);
+  }, [priceBounds]);
+
+  const availableSizes = useMemo(() => {
+    const set = new Set();
+    for (const p of products) {
+      (p.sizes || []).forEach((s) => set.add(s));
+    }
+    return Array.from(set);
+  }, [products]);
 
   const toggleCategory = (e) => {
     if (category.includes(e.target.value)) {
@@ -46,10 +76,23 @@ const Collection = () => {
       );
     }
     if (subcategory.length > 0) {
-      productsCopy = productsCopy.filter((item) =>
-        subcategory.includes(item.subCategory)
-      );
+      productsCopy = productsCopy.filter((item) => {
+        const sub = item.subCategory ?? item.subcategory;
+        return subcategory.includes(sub);
+      });
     }
+    // Size filter
+    if (selectedSizes.length > 0) {
+      productsCopy = productsCopy.filter((item) => {
+        const sizes = item.sizes || [];
+        return selectedSizes.some((s) => sizes.includes(s));
+      });
+    }
+    // Price filter
+    productsCopy = productsCopy.filter((item) => {
+      const price = typeof item.price === 'number' ? item.price : 0;
+      return price >= (Number(minPrice) || 0) && price <= (Number(maxPrice) || Infinity);
+    });
 
     setFilterProducts(productsCopy);
   };
@@ -71,14 +114,14 @@ const Collection = () => {
 
   useEffect(() => {
     applyFilter();
-  }, [category, subcategory, search, showSearch, products]);
+  }, [category, subcategory, search, showSearch, products, selectedSizes, minPrice, maxPrice]);
 
   useEffect(() => {
     sortProduct();
   }, [sortType]);
 
   return (
-    <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
+    <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t mb-20">
       {/* Filter Options */}
       <div className="min-w-60">
         <p
@@ -164,6 +207,58 @@ const Collection = () => {
               />{" "}
               Winterwear
             </p>
+          </div>
+        </div>
+        {/* Sizes */}
+        <div
+          className={`border border-gray-300 pl-5 py-3 my-5 ${
+            showFilter ? "" : "hidden"
+          } sm:block`}
+        >
+          <p className="mb-3 text-sm font-medium">AVAILABLE SIZES</p>
+          <div className="flex flex-wrap gap-3 text-sm font-light text-gray-700 pr-4">
+            {availableSizes.map((s) => (
+              <label key={s} className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  className="w-3"
+                  checked={selectedSizes.includes(s)}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setSelectedSizes((prev) => checked ? [...prev, s] : prev.filter((x) => x !== s));
+                  }}
+                />
+                {s}
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Price Range */}
+        <div
+          className={`border border-gray-300 pl-5 py-3 my-5 ${
+            showFilter ? "" : "hidden"
+          } sm:block`}
+        >
+          <p className="mb-3 text-sm font-medium">PRICE RANGE</p>
+          <div className="flex items-center gap-2 pr-4">
+            <input
+              type="number"
+              className="w-24 border border-gray-300 px-2 py-1 text-sm rounded"
+              value={minPrice}
+              min={priceBounds.min}
+              max={maxPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+            />
+            <span className="text-gray-500">to</span>
+            <input
+              type="number"
+              className="w-24 border border-gray-300 px-2 py-1 text-sm rounded"
+              value={maxPrice}
+              min={minPrice}
+              max={priceBounds.max}
+              onChange={(e) => setMaxPrice(e.target.value)}
+            />
           </div>
         </div>
       </div>

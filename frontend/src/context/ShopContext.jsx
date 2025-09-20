@@ -15,8 +15,22 @@ const ShopContextProvider = (props) => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [token, setToken] = useState("");
+  const [siteOutOfStock, setSiteOutOfStock] = useState(true);
 
   const addToCart = async (itemId, size) => {
+    if (siteOutOfStock) {
+      toast.error("OUT OF STOCK", {
+        className: "toastify-font",
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
+      return;
+    }
     if (!size) {
       toast.error("SELECT SIZE", {
         className: "toastify-font",
@@ -123,7 +137,7 @@ const ShopContextProvider = (props) => {
       const response = await axios.get("/api/product/list");
 
       if (response.data.success) {
-        setProducts(response.data.products);
+        setProducts(response.data.products || []);
       } else {
         toast.error(response.data.message);
       }
@@ -193,6 +207,7 @@ const ShopContextProvider = (props) => {
     navigate,
     setToken,
     token,
+    siteOutOfStock,
   };
 
   return (

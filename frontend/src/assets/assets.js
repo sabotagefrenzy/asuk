@@ -24,6 +24,8 @@ import contact_img from './contact_img.png'
 import razorpay_logo from './razorpay_logo.png'
 import stripe_logo from './stripe_logo.png'
 import cross_icon from './cross_icon.png'
+import ssl_secure from './ssl_secure.png'
+import pci_compliant from './pci_compliant.png'
 
 export const assets = {
     asuk_logo,
@@ -43,7 +45,9 @@ export const assets = {
     contact_img,
     razorpay_logo,
     stripe_logo,
-    cross_icon
+    cross_icon,
+    ssl_secure,
+    pci_compliant
 }
 
 export const products = [

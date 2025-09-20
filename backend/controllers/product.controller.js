@@ -88,4 +88,46 @@ const singleProduct = async (req, res) => {
   }
 };
 
-export { listProduct, addProduct, removeProduct, singleProduct };
+// Admin: Seed Oversize variants for products
+// If productIds is provided, clones those; otherwise clones the latest 3 by date.
+const seedOversize = async (req, res) => {
+  try {
+    const { productIds } = req.body || {};
+
+    let baseProducts;
+    if (Array.isArray(productIds) && productIds.length > 0) {
+      baseProducts = await productModel.find({ _id: { $in: productIds } });
+    } else {
+      baseProducts = await productModel.find({}).sort({ date: -1 }).limit(3);
+    }
+
+    const created = [];
+    for (const p of baseProducts) {
+      // Skip if an Oversize variant with same base name already exists
+      const oversizeName = p.name.includes("Oversize") ? p.name : `${p.name} (Oversize)`;
+      const exists = await productModel.findOne({ name: oversizeName });
+      if (exists) continue;
+
+      const clone = new productModel({
+        name: oversizeName,
+        description: p.description,
+        price: p.price,
+        image: p.image, // reuse existing Cloudinary URLs
+        category: p.category,
+        subCategory: p.subCategory,
+        sizes: ["Oversize"],
+        bestSeller: !!p.bestSeller,
+        date: Date.now(),
+      });
+      await clone.save();
+      created.push(clone);
+    }
+
+    res.json({ success: true, createdCount: created.length, products: created });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export { listProduct, addProduct, removeProduct, singleProduct, seedOversize };

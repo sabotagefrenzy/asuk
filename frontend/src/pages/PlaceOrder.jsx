@@ -241,7 +241,7 @@ const PlaceOrder = () => {
             >
               <p
                 className={`min-w-3.5 h-3.5 border rounded-full ${
-                  method === "stripe" ? "bg-green-400" : ""
+                  method === "stripe" ? "bg-[var(--accent-warm)]" : ""
                 }`}
               ></p>
               <img src={assets.stripe_logo} className="h-5 mx-4" alt="" />
@@ -252,7 +252,7 @@ const PlaceOrder = () => {
             >
               <p
                 className={`min-w-3.5 h-3.5 border rounded-full ${
-                  method === "razorpay" ? "bg-green-400" : ""
+                  method === "razorpay" ? "bg-[var(--accent-warm)]" : ""
                 }`}
               ></p>
               <img src={assets.razorpay_logo} className="h-5 mx-4" alt="" />
@@ -263,7 +263,7 @@ const PlaceOrder = () => {
             >
               <p
                 className={`min-w-3.5 h-3.5 border rounded-full ${
-                  method === "cod" ? "bg-green-400" : ""
+                  method === "cod" ? "bg-[var(--accent-warm)]" : ""
                 }`}
               ></p>
               <p className="text-gray-500 text-sm font-medium mx-4">
@@ -273,10 +273,7 @@ const PlaceOrder = () => {
           </div>
 
           <div className="w-full text-end mt-8">
-            <button
-              type="submit"
-              className="bg-black text-white px-16 py-3 text-sm"
-            >
+            <button type="submit" className="btn btn-primary">
               PLACE ORDER
             </button>
           </div>

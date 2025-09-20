@@ -20,6 +20,8 @@ const List = ({ token }) => {
     }
   };
 
+  
+
   const removeProduct = async (id) => {
     try {
       const response = await axios.post(
@@ -44,7 +46,7 @@ const List = ({ token }) => {
 
   useEffect(() => {
     fetchList();
-  }, [fetchList]);
+  }, []);
 
   return (
     <>

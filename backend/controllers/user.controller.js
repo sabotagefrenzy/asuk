@@ -90,3 +90,65 @@ const adminLogin = async (req, res) => {
 };
 
 export { loginUser, registerUser, adminLogin };
+
+// Get authenticated user's profile
+const getProfile = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    if (!userId) {
+      return res.json({ success: false, message: "Not Authorized" });
+    }
+    const user = await userModel.findById(userId).select("name email");
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+    res.json({ success: true, user });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export { getProfile };
+
+// Update authenticated user's profile (name, email)
+const updateProfile = async (req, res) => {
+  try {
+    const { userId, name, email } = req.body;
+    if (!userId) {
+      return res.json({ success: false, message: "Not Authorized" });
+    }
+
+    if (!name || !email) {
+      return res.json({ success: false, message: "Name and email are required" });
+    }
+
+    if (!validator.isEmail(email)) {
+      return res.json({ success: false, message: "Please enter a valid email Id" });
+    }
+
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    if (email !== user.email) {
+      const exists = await userModel.findOne({ email });
+      if (exists) {
+        return res.json({ success: false, message: "Email already exists" });
+      }
+    }
+
+    user.name = name;
+    user.email = email;
+    await user.save();
+
+    const { password, ...safe } = user.toObject();
+    res.json({ success: true, user: { name: safe.name, email: safe.email } });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export { updateProfile };

@@ -200,6 +200,15 @@ const Add = ({ token }) => {
       <div>
         <p className="mb-2">Product Sizes</p>
         <div className="flex gap-3">
+          <div onClick={() => handleSizeChange("Oversize")}>
+            <p
+              className={`${
+                sizes.includes("Oversize") ? "bg-pink-100" : "bg-slate-200"
+              } px-3 py-1 cursor-pointer`}
+            >
+              Oversize
+            </p>
+          </div>
           <div onClick={() => handleSizeChange("S")}>
             <p
               className={`${

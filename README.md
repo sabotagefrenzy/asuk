@@ -1,5 +1,6 @@
 
-# Asuk - The T-shirt Store 👕
+# Asuk - The T-shirt Store 👕<img width="1609" height="877" alt="image" src="https://github.com/user-attachments/assets/660d7234-c9cf-4203-ad43-f7e39a12560a" />
+
 
 Asuk is a modern, full-featured e-commerce platform dedicated to selling a unique collection of t-shirts for men, women, and kids. This project provides a seamless shopping experience from browsing products to secure online payments.
 

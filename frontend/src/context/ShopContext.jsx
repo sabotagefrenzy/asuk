@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {

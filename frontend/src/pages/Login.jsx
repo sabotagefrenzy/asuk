@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 const Login = () => {
   const [currentState, setCurrentState] = useState("Login");
-  const { token, setToken, navigate } = useContext(ShopContext);
+  const { token, setToken, navigate, backendUrl } = useContext(ShopContext);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -26,7 +26,7 @@ const Login = () => {
           toast.error(response.data.message);
         }
       } else {
-        const response = await axios.post("api/user/login", {
+        const response = await axios.post('/api/user/login', {
           email,
           password,
         });
@@ -105,7 +105,7 @@ const Login = () => {
           </p>
         )}
       </div>
-      <button className="btn btn-primary font-light mt-4">
+      <button className="btn btn-primary font-light mt-4 mb-10">
         {currentState === "Login" ? "Sign In" : "Sign Up"}
       </button>
     </form>

@@ -5,7 +5,6 @@ import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { currency } from "../../../admin/src/App";
 
 const PlaceOrder = () => {
   const [method, setMethod] = useState("cod");
@@ -18,6 +17,7 @@ const PlaceOrder = () => {
     getCartAmount,
     delivery_fee,
     products,
+    currency,
     backendUrl,
   } = useContext(ShopContext);
 
@@ -53,7 +53,7 @@ const PlaceOrder = () => {
         console.log(response);
         try {
           const { data } = await axios.post(
-             "/api/order/verifyRazorpay",
+            "/api/order/verifyRazorpay",
             response,
             { headers: { token } }
           );
